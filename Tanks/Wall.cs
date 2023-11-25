@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,12 @@ namespace Tanks
         public int Health { get; set; }
         public float XPos { get; set; }
         public float YPos { get; set; }
+
+        public int Width = 80;
+        public int Height = 71;
+
+        public Rectangle Bounds => new Rectangle((int)XPos, (int)YPos, Width, Height);
+
 
         public Wall(int health, float xPos, float yPos)
         {
