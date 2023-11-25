@@ -20,6 +20,14 @@ namespace Tanks
         Texture2D greyTankTexture;
         Texture2D yellowTankTexture;
 
+        Vector2 ballPosition;
+        Vector2 playerAPos;
+        Vector2 playerAIPos;
+        float ballSpeed;
+        float ScreenHeight;
+        float ScreenWidth;
+
+
         public Game()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -31,9 +39,17 @@ namespace Tanks
         {
             // TODO: Add your initialization logic here
             // Initialize player, AI player, and walls
+            ScreenHeight = _graphics.PreferredBackBufferHeight;
+            ScreenWidth = _graphics.PreferredBackBufferWidth;
             player = new Player("Player", 100);
             aiPlayer = new Player("AI Player", 100);
             walls = GenerateRandomWalls();
+
+
+            ballPosition = new Vector2(ScreenWidth / 2,ScreenHeight / 2);
+            ballSpeed = 100f;
+            
+
             base.Initialize();
         }
 
@@ -47,6 +63,7 @@ namespace Tanks
             greenTankTexture = Content.Load<Texture2D>("GreenTank");
             greyTankTexture = Content.Load<Texture2D>("GreyTank");
             yellowTankTexture = Content.Load<Texture2D>("YellowTank");
+            walls = GenerateRandomWalls();
         }
 
         protected override void Update(GameTime gameTime)
@@ -65,11 +82,29 @@ namespace Tanks
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-            _spriteBatch.Draw(ballTexture, new Vector2(0, 0), Color.White);
-            _spriteBatch.Draw(brickWallTexture, new Vector2(50, 0), Color.White);
+            _spriteBatch.Draw(
+                ballTexture,
+                ballPosition,
+                null,
+                Color.White,
+                0f,
+                new Vector2(ballTexture.Width / 2, ballTexture.Height / 2),
+                Vector2.One,
+                SpriteEffects.None,
+                0f);
+
+            //_spriteBatch.Draw(brickWallTexture, new Vector2(50, 0), Color.White);
             _spriteBatch.Draw(greenTankTexture, new Vector2(100, 0), Color.White);
             _spriteBatch.Draw(greyTankTexture, new Vector2(150, 0), Color.White);
-            _spriteBatch.Draw(yellowTankTexture, new Vector2(200, 0), Color.White);
+            _spriteBatch.Draw(yellowTankTexture, new Vector2(400, 400), Color.White);
+
+            // position walls
+            foreach (var wall in walls)
+            {
+                _spriteBatch.Draw(brickWallTexture, new Vector2(wall.YPos, wall.XPos), Color.White);
+            }
+
+
             _spriteBatch.End();
 
 
@@ -113,12 +148,20 @@ namespace Tanks
         private List<Wall> GenerateRandomWalls()
         {
             // Generate and return a list of random walls on the game board
-            // You can implement the logic for generating random walls here
+
+            // Get the vector they sit at
+            float xPos = 0;
+            float yPos = 0;
+            Random random = new Random();
+
+
             // For simplicity, let's create a list with a fixed number of walls for now
             List<Wall> generatedWalls = new List<Wall>();
             for (int i = 0; i < 5; i++)
             {
-                generatedWalls.Add(new Wall(20)); // Each wall has 20 health points
+                xPos = (float)(random.NextDouble() * ScreenWidth);
+                yPos = (float)(random.NextDouble() * ScreenHeight);
+                generatedWalls.Add(new Wall(20,xPos,yPos)); // Each wall has 20 health points
             }
             return generatedWalls;
         }
